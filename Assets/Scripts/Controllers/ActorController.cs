@@ -5,37 +5,54 @@ using UnityEngine.AI;
 [RequireComponent(typeof(Collider))]
 public abstract class ActorController : MonoBehaviour
 {
-    protected NavMeshAgent agent;
-
     [SerializeField]
     protected Color baseColor = Color.blue;
-
     protected Color taggedColor = Color.red;
-
     protected MeshRenderer renderer;
 
     public delegate void OnActorTagged(bool val);
-
     public OnActorTagged onActorTagged;
 
     public bool IsTagged { get; protected set; }
 
+    private NavMeshAgent agent;
+    public NavMeshAgent Agent
+    {
+        get
+        {
+            return agent;
+        }
+
+        set
+        {
+            agent = value;
+        }
+    }
+
+    float agentSpeed = 5f;
+
     // Use this for initialization
     protected virtual void Start()
     {
-        agent = GetComponent<NavMeshAgent>();
+        Agent = GetComponent<NavMeshAgent>();
         renderer = GetComponent<MeshRenderer>();
 
         SetTagged(false);
+        Agent.speed = agentSpeed;
 
         onActorTagged += SetTagged;
+        GameController.OnGameFinish += StopAllAgents;
+    }
+
+    private void StopAllAgents() {
+        Agent.isStopped = true;
     }
 
     protected abstract Vector3 GetTargetLocation();
 
     protected void MoveActor()
     {
-        agent.SetDestination(GetTargetLocation());
+        Agent.SetDestination(GetTargetLocation());
     }
 
     protected void OnCollisionEnter(Collision collision)
@@ -53,7 +70,7 @@ public abstract class ActorController : MonoBehaviour
 
     protected virtual void OnDestroy()
     {
-        agent = null;
+        Agent = null;
         renderer = null;
         onActorTagged -= SetTagged;
     }

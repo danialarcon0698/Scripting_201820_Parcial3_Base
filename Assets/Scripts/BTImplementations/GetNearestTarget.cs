@@ -1,16 +1,25 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class GetNearestTarget : MonoBehaviour {
+public class GetNearestTarget : Task
+{
+    public override bool Execute()
+    {
+        GetNearestActor();
+        return base.Execute();
+    }
 
-	// Use this for initialization
-	void Start () {
-		
-	}
-	
-	// Update is called once per frame
-	void Update () {
-		
-	}
+    private void GetNearestActor() {
+        float closestActorDistance = Mathf.Infinity;
+        ActorController closestActor = null;
+        foreach (ActorController actor in GameController.instance.Players)
+        {
+            float dist = Vector3.Distance(transform.localPosition, actor.transform.localPosition);
+            if (dist < closestActorDistance && actor != GetComponent<ActorController>())
+            {
+                closestActorDistance = dist;
+                closestActor = actor;
+            }
+        }
+        GameController.instance.TargetActor = closestActor;
+    }
 }

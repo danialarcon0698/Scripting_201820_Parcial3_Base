@@ -1,23 +1,27 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using System.Collections;
 
 public class UIManager : MonoBehaviour
 {
-    [SerializeField]
     private Text timerText;
+    [SerializeField] GameController gameController;
 
     // Use this for initialization
     private void Start()
     {
+        timerText = GetComponentInChildren<Text>();
         if (timerText == null)
         {
             enabled = false;
         }
     }
 
-    // Update is called once per frame
     private void Update()
     {
-        //TODO: Set text from GameController
+        if (gameController.CurrentGameTime > 0)
+            timerText.text = gameController.CurrentGameTime.ToString("00.000");
+        else
+            timerText.text = "00.000";
     }
 }

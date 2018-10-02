@@ -5,6 +5,7 @@ public class StopMovement : Task
 {
     public override bool Execute()
     {
+        ControlledAI.Agent.isStopped = true;
         return base.Execute();
     }
 }

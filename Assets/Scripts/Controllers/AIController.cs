@@ -24,6 +24,12 @@ public class AIController : ActorController
         }
 
         AIMoveTest.Instance.onAIMoveIssued += MoveAI;
+
+        InvokeRepeating("ExecuteRoot",1f,3f);
+    }
+
+    private void ExecuteRoot() {
+        btRootNode.Execute();
     }
 
     protected override void OnDestroy()
