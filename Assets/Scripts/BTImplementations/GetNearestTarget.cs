@@ -14,7 +14,7 @@ public class GetNearestTarget : Task
         foreach (ActorController actor in GameController.instance.Players)
         {
             float dist = Vector3.Distance(transform.localPosition, actor.transform.localPosition);
-            if (dist < closestActorDistance && actor != GetComponent<ActorController>())
+            if (dist < closestActorDistance && actor != GetComponent<ActorController>() && actor != GameController.instance.LastActorTagged)
             {
                 closestActorDistance = dist;
                 closestActor = actor;

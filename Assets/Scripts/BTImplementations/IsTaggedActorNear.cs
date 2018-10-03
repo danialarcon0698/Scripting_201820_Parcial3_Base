@@ -5,18 +5,18 @@
 public class IsTaggedActorNear : Selector
 {
     [SerializeField]
-    private float acceptableDistance = 5F;
+    private float acceptableDistance;
 
     protected override bool CheckCondition()
     {
-        return IsTaggedNear();
+        return TaggedNear();
     }
 
-    public bool IsTaggedNear()
-    {
+    private bool TaggedNear() {
         bool taggedNear = false;
-        RaycastHit hit;
-        if (Physics.SphereCast(transform.position, acceptableDistance, transform.forward, out hit))
+        RaycastHit[] hits = Physics.SphereCastAll(transform.position, acceptableDistance, transform.forward);
+
+        foreach (RaycastHit hit in hits)
         {
             if (hit.transform.GetComponent<ActorController>() != null && hit.transform.GetComponent<ActorController>().IsTagged)
                 taggedNear = true;

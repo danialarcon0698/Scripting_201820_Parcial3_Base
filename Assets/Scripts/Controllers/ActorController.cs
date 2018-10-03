@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
+using System.Collections.Generic;
+using System.Collections;
 
 [RequireComponent(typeof(NavMeshAgent))]
 [RequireComponent(typeof(Collider))]
@@ -29,7 +31,24 @@ public abstract class ActorController : MonoBehaviour
         }
     }
 
+    public int TimesTagged
+    {
+        get
+        {
+            return timesTagged;
+        }
+        set {
+            timesTagged = value;
+        }
+    }
+    int timesTagged;
+
     float agentSpeed = 5f;
+
+    bool collisioned = false;
+
+    private bool stunned = false;
+    [SerializeField] float stunTime;
 
     // Use this for initialization
     protected virtual void Start()
@@ -39,9 +58,17 @@ public abstract class ActorController : MonoBehaviour
 
         SetTagged(false);
         Agent.speed = agentSpeed;
+        timesTagged = 0;
 
         onActorTagged += SetTagged;
         GameController.OnGameFinish += StopAllAgents;
+        GameController.OnWinners += Winners;
+    }
+
+    private void Winners(List<ActorController> actors) {
+        foreach (ActorController a in actors) {
+            a.renderer.material.color = Color.yellow;
+        }
     }
 
     private void StopAllAgents() {
@@ -57,14 +84,24 @@ public abstract class ActorController : MonoBehaviour
 
     protected void OnCollisionEnter(Collision collision)
     {
-        ActorController otherActor = collision.gameObject.GetComponent<ActorController>();
+        GameObject otherActor = collision.gameObject;
 
-        if (otherActor != null)
+        if (collision.gameObject.GetComponent<Rock>() != null && GetComponent<Rock>() == null) {
+            gameObject.AddComponent<Rock>();
+        }
+
+        if (otherActor != null && otherActor.GetComponent<ActorController>()!=null)
         {
-            print("collided!");
+            if (IsTagged && collisioned)
+            {
+                GameController.instance.LastActorTagged = this;
 
-            otherActor.onActorTagged(true);
-            onActorTagged(false);
+                otherActor.GetComponent<ActorController>().timesTagged++;
+
+                print("collided!");
+                otherActor.GetComponent<ActorController>().onActorTagged(true);
+                onActorTagged(false);
+            }
         }
     }
 
@@ -79,10 +116,24 @@ public abstract class ActorController : MonoBehaviour
     {
         IsTagged = val;
 
+        if (IsTagged)
+            StartCoroutine(CoolDown());
+
         if (renderer)
         {
             print(string.Format("Changing color to {0}", gameObject.name));
             renderer.material.color = val ? taggedColor : baseColor;
         }
+    }
+
+    IEnumerator CoolDown() {
+        yield return new WaitForSeconds(4);
+        collisioned = true;
+    }
+
+    public IEnumerator Stunned() {
+        agent.speed = 0;
+        yield return stunTime;
+        agent.speed = agentSpeed;
     }
 }
