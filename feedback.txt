@@ -1,0 +1,15 @@
+Feedback
+
+Examen (4.2/5.0)
+ * Individualmente, el AI funciona en sus roles de perseguidor y perseguido. No obstante, cuando el AI cambia de roles, no funcina (si un AI tagged coge a otro, este huye, pero el nuevo tagged no se mueve).
+ * Cómo tiro las piedras?
+ * BT OK
+
+Bonificación (0.5/0.5)
+ * Solo hay un área. Se podrían haber puesto más, pero vale.
+ * Y cómo tiraba las piedras?
+ * La explicación del bug original no es correcta. De hecho, esa es la explicación de cómo funciona un selector.
+
+Compensación : 1.0 (qué hacemos con ese 1.0?)
+
+Total: 4.7 /5.0 + 1.0
